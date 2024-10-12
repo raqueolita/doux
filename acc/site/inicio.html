@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOUX</title>
+    <link rel="stylesheet" href="inicio.css">
+    <link rel="icon" type="image/png" href="logo doux flor (2).png">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <h1 class="logo">Doux</h1>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#produtos">Produtos</a></li>
+                    <li><a href="cadastro.html">Cadastre-se</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        
+        <section id="home" class="hero">
+            <h2>Bem-vindo à nossa loja de cosméticos</h2>
+            <p>Encontre os melhores produtos de beleza aqui!</p>
+        </section>
+
+        <section id="produtos" class="products">
+            <h2>Produtos em Destaque</h2>
+            <div class="product-grid">
+                <div class="product-item">
+                    <img src="91d8805ba11b763afbf8d775f53f1519.jpg" alt="EGEO PERFUME">
+                    <h3>EGEO PERFUME</h3>
+                    <p>Descrição do Produto </p>
+                    <p class="price">R$ 90,00</p>
+                    <!-- Envia o produto selecionado como parâmetro na URL -->
+                    <button class="btn-reservar" onclick="reservarProduto('EGEO PERFUME')">Reservar</button>
+                </div>
+                <div class="product-item">
+                    <img src="cc863755b8de06f6e2a79b1f1e467264.jpg" alt="MONANGE HIDRATANTE">
+                    <h3>MONANGE HIDRATANTE</h3>
+                    <p>Descrição do Produto </p>
+                    <p class="price">R$ 8,00</p>
+                    <!-- Envia o produto selecionado como parâmetro na URL -->
+                    <button class="btn-reservar" onclick="reservarProduto('MONANGE HIDRATANTE')">Reservar</button>
+                </div>
+                <div class="product-item">
+                    <img src="aef5814f931a913dd089bb7d3beeccac.jpg" alt="DOVE DESODORANTE">
+                    <h3>DOVE DESODORANTE</h3>
+                    <p>Descrição do Produto</p>
+                    <p class="price">R$ 14,50</p>
+                   
+                    <button class="btn-reservar" onclick="reservarProduto('DOVE DESODORANTE')">Reservar</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Doux. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        
+        function reservarProduto(produto) {
+            window.location.href = `reserva.html?produto=${encodeURIComponent(produto)}`;
+        }
+
+        const produtos = [
+    { id: 1, nome: 'Shampoo', preco: '25,90' },
+    { id: 2, nome: 'Condicionador', preco: '28,50' },
+    { id: 3, nome: 'Creme Hidratante', preco: '45,00' },
+    { id: 4, nome: 'Perfume', preco: '89,99' },
+    { id: 5, nome: 'Sabonete Líquido', preco: '15,00' },
+];
+
+function carregarProdutos() {
+    const tbody = document.querySelector('#tabela-produtos tbody');
+    tbody.innerHTML = '';
+    
+    produtos.forEach(produto => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${produto.id}</td>
+            <td>${produto.nome}</td>
+            <td>R$ ${produto.preco}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function pesquisarProduto() {
+    const input = document.getElementById('pesquisa-produto').value.toLowerCase();
+    const tbody = document.querySelector('#tabela-produtos tbody');
+    tbody.innerHTML = '';
+
+    const produtosFiltrados = produtos.filter(produto => 
+        produto.nome.toLowerCase().includes(input)
+    );
+
+    produtosFiltrados.forEach(produto => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${produto.id}</td>
+            <td>${produto.nome}</td>
+            <td>R$ ${produto.preco}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+window.onload = carregarProdutos;
+
+    </script>
+</body>
+</html>
+
