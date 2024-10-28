@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Doux</title>
+  <link rel="stylesheet" href="logincadastro.css">
+</head>
+<body>
+
+  <form id="loginForm"> <!-- Adicionando um id ao formulário -->
+    <h1>Faça Login</h1>
+    <div class="inputbox">
+      <ion-icon name="mail-outline"></ion-icon>
+      <input type="email" id="email" required> <!-- Adicionando id ao campo -->
+      <label>Email</label>
+    </div>
+    <div class="inputbox">
+      <ion-icon name="lock-closed-outline"></ion-icon>
+      <input type="password" id="password" required> <!-- Adicionando id ao campo -->
+      <label>Senha</label> 
+    </div>
+
+    <div class="logo-container">
+      <img src="" alt="">
+    </div>
+
+    <button type="submit">Entrar</button> <!-- Adicionado type="submit" para o botão -->
+    <div class="register">
+      <p>Não possui conta? <a href="cadastro.html">Cadastre-se</a></p>
+    </div>
+  </form>
+
+  
+    <script>
+    // Selecionar o formulário de login pelo id
+    const loginForm = document.querySelector('#loginForm');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Capturar valores dos inputs
+            const email = loginForm.querySelector('input[type="email"]').value.trim();
+            const password = loginForm.querySelector('input[type="password"]').value.trim();
+
+            // Validações 
+            if (!validateEmail(email)) {
+                alert('Por favor, insira um email válido.');
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('A senha deve ter pelo menos 6 caracteres.');
+                return;
+            }
+
+            // Fazer a requisição para o back-end
+            try {
+                const response = await fetch('http://localhost:8080/auth/login', { // Altere a URL conforme necessário
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ emailCliente: email, senhaCliente: password }), // Ajuste o nome dos campos conforme o seu DTO
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Login realizado com sucesso!');
+                    window.location.href = 'inicio.html'; 
+                } else {
+                    alert(`Erro: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+                alert('Ocorreu um erro ao tentar fazer login. Tente novamente mais tarde.');
+            }
+        });
+    }
+
+    // Função para validar email
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+</script>
+  
+</body>
+</html>

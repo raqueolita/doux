@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro - Doux</title>
+  <link rel="stylesheet" href="logincadastro.css">
+  <link rel="icon" type="image/png" href="">
+</head>
+<body>
+  <!-- Formulário de cadastro -->
+  <form id="registerForm"> <!-- Adicionado id ao formulário -->
+    <h1>Crie sua conta</h1>
+    
+    <!-- Campos de nome e sobrenome -->
+    <div class="form-row">
+      <div class="inputbox">
+        <input type="text" name="firstName" required>
+        <label>Nome</label>
+      </div>
+      <div class="inputbox">
+        <input type="text" name="lastName" required>
+        <label>Sobrenome</label>
+      </div>
+    </div>
+
+    <!-- Campos de email e senha -->
+    <div class="form-row">
+      <div class="inputbox">
+        <ion-icon name="mail-outline"></ion-icon>
+        <input type="email" name="email" required>
+        <label>Email</label>
+      </div>
+      <div class="inputbox">
+        <ion-icon name="lock-closed-outline"></ion-icon>
+        <input type="password" name="password" required>
+        <label>Senha</label>
+      </div>
+    </div>
+    
+    <!-- Campo de telefone -->
+    <div class="inputbox">
+      <input type="tel" name="phone" required>
+      <label>Número</label>
+    </div>
+
+    <!-- Botão de cadastrar e link para login -->
+    <button type="submit">Cadastrar</button>
+    <div class="register">
+      <p>Já possui cadastro? <a href="login.html">Login</a></p>
+    </div>
+  </form>
+
+  <script>
+    // Selecionar o formulário de cadastro pelo id
+    const registerForm = document.querySelector('#registerForm');
+
+    if (registerForm) {
+      registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Capturar valores dos inputs
+        const firstName = registerForm.querySelector('input[name="firstName"]').value.trim();
+        const lastName = registerForm.querySelector('input[name="lastName"]').value.trim();
+        const email = registerForm.querySelector('input[type="email"]').value.trim();
+        const password = registerForm.querySelector('input[type="password"]').value.trim();
+        const phone = registerForm.querySelector('input[name="phone"]').value.trim();
+
+        // Validações
+        if (firstName === '' || lastName === '') {
+          alert('Por favor, preencha seu nome completo.');
+          return;
+        }
+
+        if (!validateEmail(email)) {
+          alert('Por favor, insira um email válido.');
+          return;
+        }
+
+        if (password.length < 6) {
+          alert('A senha deve ter pelo menos 6 caracteres.');
+          return;
+        }
+
+        if (!validatePhone(phone)) {
+          alert('Por favor, insira um número de telefone válido.');
+          return;
+        }
+
+        // Fazer a requisição para o back-end
+        try {
+          const response = await fetch('http://seu-backend-url.com/api/cadastro', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ firstName, lastName, email, password, phone }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            alert('Cadastro realizado com sucesso!');
+            
+            window.location.href = 'login.html'; 
+          } else {
+            alert(`Erro: ${data.message}`);
+          }
+        } catch (error) {
+          console.error('Erro na requisição:', error);
+          alert('Ocorreu um erro ao tentar realizar o cadastro. Tente novamente mais tarde.');
+        }
+      });
+    }
+
+    // Função para validar email
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    // Função para validar telefone
+    function validatePhone(phone) {
+      const re = /^\(?\d{2}\)?[\s-]?\d{4,5}-?\d{4}$/;
+      return re.test(phone);
+    }
+  </script>
+
+</body>
+</html>
