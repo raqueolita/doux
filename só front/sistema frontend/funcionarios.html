@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Funcionários</title>
+    <link rel="stylesheet" href="funcionarios.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <h2>Doux</h2>
+        </div>
+        <ul>
+            <li><a href="inicio.html">Início</a></li>
+            <li><a href="cliente.html">Clientes</a></li>
+            <li><a href="produtos.html">Produtos</a></li>
+            <li><a href="reservas.html">Reservas</a></li>
+            <li><a href="funcionarios.html">Funcionários</a></li>
+        </ul>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="main-content">
+        <header>
+            <h2>Gerenciamento de Funcionários</h2>
+        </header>
+
+        <div class="content">
+            <button id="addEmployeeBtn">Adicionar Funcionário</button>
+            <div class="table-section">
+                <h3>Funcionários Cadastrados</h3>
+                <table id="employeesTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Telefone</th>
+                            <th>Cargo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dados dos funcionários serão inseridos aqui -->
+                    </tbody>
+                </table>
+                <p id="noEmployeesMessage" style="display: none;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para adicionar/editar funcionário -->
+    <div id="employeeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="modalTitle">Adicionar Funcionário</h2>
+            <form id="employeeForm">
+                <input type="hidden" id="employeeId">
+                <label for="employeeName">Nome do Funcionário:</label>
+                <input type="text" id="employeeName" required>
+                <label for="employeeEmail">E-mail:</label>
+                <input type="email" id="employeeEmail" required>
+                <label for="employeePhone">Telefone:</label>
+                <input type="text" id="employeePhone" required>
+                <label for="employeeRole">Cargo:</label>
+                <input type="text" id="employeeRole" required>
+                <button type="submit" id="saveEmployeeBtn">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const addEmployeeBtn = document.getElementById('addEmployeeBtn');
+        const employeeModal = document.getElementById('employeeModal');
+        const closeModalBtn = document.querySelector('.close-btn');
+        const employeeForm = document.getElementById('employeeForm');
+        const employeesTable = document.getElementById('employeesTable').getElementsByTagName('tbody')[0];
+        const noEmployeesMessage = document.getElementById('noEmployeesMessage');
+        
+        let employees = [];
+        let editingEmployeeId = null;
+
+        function openModal(title) {
+            document.getElementById('modalTitle').textContent = title;
+            employeeModal.style.display = 'block';
+        }
+
+        function closeModal() {
+            employeeModal.style.display = 'none';
+        }
+
+        function renderEmployees() {
+            employeesTable.innerHTML = '';
+            if (employees.length === 0) {
+                noEmployeesMessage.style.display = 'block';
+            } else {
+                noEmployeesMessage.style.display = 'none';
+                employees.forEach((employee, index) => {
+                    const row = employeesTable.insertRow();
+                    row.innerHTML = `
+                        <td>${employee.id}</td>
+                        <td>${employee.name}</td>
+                        <td>${employee.email}</td>
+                        <td>${employee.phone}</td>
+                        <td>${employee.role}</td>
+                        <td>
+                            <button class="edit" data-id="${index}">Editar</button>
+                            <button class="delete" data-id="${index}">Excluir</button>
+                        </td>
+                    `;
+                });
+            }
+        }
+
+        addEmployeeBtn.addEventListener('click', () => {
+            editingEmployeeId = null;
+            employeeForm.reset();
+            openModal('Adicionar Funcionário');
+        });
+
+        closeModalBtn.addEventListener('click', closeModal);
+
+        // Fecha o modal ao clicar fora dele
+        window.addEventListener('click', (event) => {
+            if (event.target === employeeModal) {
+                closeModal();
+            }
+        });
+
+        employeeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const id = editingEmployeeId !== null ? employees[editingEmployeeId].id : Date.now();
+            const name = document.getElementById('employeeName').value;
+            const email = document.getElementById('employeeEmail').value;
+            const phone = document.getElementById('employeePhone').value;
+            const role = document.getElementById('employeeRole').value;
+
+            const employeeData = { id, name, email, phone, role };
+
+            if (editingEmployeeId === null) {
+                employees.push(employeeData);
+            } else {
+                employees[editingEmployeeId] = employeeData;
+            }
+
+            closeModal();
+            renderEmployees();
+        });
+
+        employeesTable.addEventListener('click', (e) => {
+            if (e.target.classList.contains('edit')) {
+                const id = e.target.getAttribute('data-id');
+                editingEmployeeId = id;
+                const employee = employees[id];
+                document.getElementById('employeeName').value = employee.name;
+                document.getElementById('employeeEmail').value = employee.email;
+                document.getElementById('employeePhone').value = employee.phone;
+                document.getElementById('employeeRole').value = employee.role;
+                openModal('Editar Funcionário');
+            } else if (e.target.classList.contains('delete')) {
+                const id = e.target.getAttribute('data-id');
+                employees.splice(id, 1);
+                renderEmployees();
+            }
+        });
+
+        renderEmployees();
+    });
+    </script>
+</body>
+</html>
